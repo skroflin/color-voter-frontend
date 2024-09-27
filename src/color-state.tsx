@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { program, colorPDA, ColorData } from "./anchor/setup";
+import { getProgram, colorPDA, ColorData } from "./anchor/setup";
 import { Keypair } from "@solana/web3.js";
 
 export default function ColorState() {
@@ -8,6 +8,7 @@ export default function ColorState() {
     const wallet = useWallet();
     const [colorData, setColorData] = useState<ColorData | null>(null);
     const [loading, setLoading] = useState(true);
+    const program = getProgram(wallet);
 
     useEffect(() => {
         const fetchColorData = async () => {

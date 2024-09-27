@@ -1,20 +1,30 @@
-import { IdlAccounts, Program } from "@coral-xyz/anchor";
-import { ColorVoterBackend, IDL } from "./idl";
+import { AnchorProvider, Idl, IdlAccounts, Program } from "@coral-xyz/anchor";
 import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
 import { Buffer } from "buffer";
+import idl from '../anchor/idl.json';
 
-const programId = new PublicKey("xT1sp4mfJ4rNGjwbrCNNMgFPXmUgUerAYCsoEGNKd4U");
+const stringflayedIdl = JSON.stringify(idl);
+const jsonIdl = JSON.parse(stringflayedIdl);
+const programId = new PublicKey(idl.address);
 const connection = new Connection(clusterApiUrl("testnet"), "confirmed");
 
 window.Buffer = window.Buffer || Buffer;
 
-export const program = new Program<ColorVoterBackend>(IDL, programId, {
-    connection,
-});
+export function getProgram(wallet: any) {
+    if (!wallet) {
+        throw new Error("Wallet is not connected");
+    }
+
+    const provider = new AnchorProvider(connection, wallet, {
+        preflightCommitment: "confirmed",
+    });
+
+    return new Program(jsonIdl as Idl, programId, provider);
+}
 
 export const [colorPDA] = PublicKey.findProgramAddressSync(
     [Buffer.from("color")],
-    program.programId,
+    programId,
 );
 
-export type ColorData = IdlAccounts<ColorVoterBackend>["color"];
+export type ColorData = IdlAccounts<typeof jsonIdl>["Color"];

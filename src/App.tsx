@@ -8,23 +8,27 @@ import {
   WalletModalProvider,
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
-import { clusterApiUrl } from "@solana/web3.js";
 import "./App.css";
 
 // Default styles that can be overridden by your app
 import "@solana/wallet-adapter-react-ui/styles.css";
 import ColorState from "./color-state";
+import { SolflareWalletAdapter } from "@solana/wallet-adapter-solflare";
+
+
+import { Buffer } from "buffer";
+window.Buffer = Buffer;
+
 
 function App() {
   // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
   const network = WalletAdapterNetwork.Testnet;
   // You can also provide a custom RPC endpoint.
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const endpoint = "http://127.0.0.1:8899";
 
   const wallets = useMemo(
     () => [
-      // if desired, manually define specific/custom wallets here (normally not required)
-      // otherwise, the wallet-adapter will auto detect the wallets a user's browser has available
+      new SolflareWalletAdapter(),
     ],
     [network],
   );
@@ -34,7 +38,7 @@ function App() {
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <WalletMultiButton />
-          <h1>Color Voter</h1>
+          <h1>Hello Solana</h1>
           <ColorState />
         </WalletModalProvider>
       </WalletProvider>
